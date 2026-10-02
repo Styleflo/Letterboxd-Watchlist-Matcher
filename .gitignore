@@ -1,7 +1,8 @@
 # Folders
 venv
 .idea
-src/__pycache__/
+__pycache__
+*/__pycache__
 
 # Files
 .DS_Store
