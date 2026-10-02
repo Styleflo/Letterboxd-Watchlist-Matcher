@@ -1,0 +1,4 @@
+fastapi==0.142.2
+letterboxdpy==6.5.7
+pydantic==2.13.5
+sentry_sdk==2.71.0
