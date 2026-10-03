@@ -8,7 +8,7 @@ import { ErrorMessage } from './components/ErrorMessage';
 import { EmptyState } from './components/EmptyState';
 import { Movie, IntersectResponse } from './types';
 import { intersectWatchlists, ApiRequestError } from './services/api';
-import { Sparkles, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export function App() {
   const [users, setUsers] = useState<string[]>([]);
@@ -65,10 +65,6 @@ export function App() {
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
         {/* Hero Section */}
         <div className="text-center mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lb-panel border border-lb-border text-xs font-semibold text-lb-green mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Letterboxd Watchlist Intersection</span>
-          </div>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
             What should we watch tonight?
           </h1>
@@ -120,7 +116,7 @@ export function App() {
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>Letterboxd Watchlist Matcher</span>
           <span className="flex items-center gap-1">
-            Built with <Heart className="w-3.5 h-3.5 text-lb-orange fill-lb-orange inline" /> for movie lovers
+            Built with <Heart className="w-3.5 h-3.5 text-lb-orange fill-lb-orange inline" /> for movie lovers by <span className="text-white font-medium">Florian Touraine</span>
           </span>
         </div>
       </footer>

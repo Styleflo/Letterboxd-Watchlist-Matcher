@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
         {/* Logo and Brand */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
-            <span className="w-3.5 h-3.5 rounded-full bg-lb-orange shadow-sm animate-pulse" />
+            <span className="w-3.5 h-3.5 rounded-full bg-lb-orange shadow-sm" />
             <span className="w-3.5 h-3.5 rounded-full bg-lb-green shadow-sm" />
             <span className="w-3.5 h-3.5 rounded-full bg-lb-blue shadow-sm" />
           </div>
