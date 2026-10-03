@@ -1,5 +1,5 @@
 # Folders
-venv
+backend/venv
 .idea
 __pycache__
 */__pycache__
