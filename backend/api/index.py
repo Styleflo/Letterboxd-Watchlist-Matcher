@@ -1,7 +1,20 @@
+import sys
 import logging
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routers import movies
+
+# Add backend directory and parent directory to sys.path for local and Vercel environments
+backend_dir = Path(__file__).resolve().parent.parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+if str(backend_dir.parent) not in sys.path:
+    sys.path.insert(0, str(backend_dir.parent))
+
+try:
+    from backend.routers import movies
+except ModuleNotFoundError:
+    from routers import movies
 
 # Configure logging system
 logging.basicConfig(

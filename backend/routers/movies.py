@@ -1,7 +1,11 @@
 import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from backend.services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users
+
+try:
+    from backend.services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users
+except ModuleNotFoundError:
+    from services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users
 
 logger = logging.getLogger(__name__)
 
