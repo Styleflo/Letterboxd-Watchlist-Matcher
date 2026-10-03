@@ -1,8 +1,14 @@
 # Folders
-venv
+backend/venv
 .idea
 __pycache__
 */__pycache__
+node_modules
+*/node_modules
+dist
+*/dist
+.vercel
 
 # Files
 .DS_Store
+*.log
