@@ -19,19 +19,26 @@ describe('intersectWatchlists API service', () => {
     );
   });
 
-  it('sends POST request with sanitized usernames and returns data on success', async () => {
+  it('sends POST request with sanitized usernames and returns tiered data on success', async () => {
     const mockResponse = {
       users_checked: ['alice', 'bob'],
-      common_count: 1,
-      common_movies: [
-        {
-          title: 'Whiplash',
-          year: '2014',
-          letterboxd_url: 'https://letterboxd.com/film/whiplash-2014/',
-          poster: 'https://example.com/whiplash.jpg',
-          summary: 'A promising young drummer enrolls at a cut-throat music conservatory.',
+      total_users: 2,
+      total_movies_found: 1,
+      movies: {
+        '2': {
+          label: 'Shared by 2/2 users',
+          count: 1,
+          movies: [
+            {
+              title: 'Whiplash',
+              year: '2014',
+              letterboxd_url: 'https://letterboxd.com/film/whiplash-2014/',
+              poster: 'https://example.com/whiplash.jpg',
+              summary: 'A promising young drummer enrolls at a cut-throat music conservatory.',
+            },
+          ],
         },
-      ],
+      },
     };
 
     globalThis.fetch = vi.fn().mockResolvedValue({
