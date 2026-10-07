@@ -91,17 +91,27 @@ export function App() {
         )}
 
         {!isLoading && !error && result && (
-          <>
-            {result.common_movies && result.common_movies.length > 0 ? (
+          (() => {
+            const hasTiersWithMovies =
+              Boolean(result.movies) &&
+              Object.values(result.movies || {}).some((t) => t.movies && t.movies.length > 0);
+            const hasLegacyMovies =
+              Boolean(result.common_movies) && (result.common_movies?.length || 0) > 0;
+            const hasMovies = (result.total_movies_found ?? 0) > 0 || hasTiersWithMovies || hasLegacyMovies;
+
+            return hasMovies ? (
               <MovieGrid
+                tiers={result.movies}
+                totalMoviesFound={result.total_movies_found}
+                totalUsers={result.total_users}
                 movies={result.common_movies}
                 usersChecked={result.users_checked}
                 onSelectMovie={setSelectedMovie}
               />
             ) : (
               <EmptyState usersChecked={result.users_checked} />
-            )}
-          </>
+            );
+          })()
         )}
       </main>
 
