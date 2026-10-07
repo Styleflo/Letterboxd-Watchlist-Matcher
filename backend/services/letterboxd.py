@@ -1,4 +1,5 @@
 import logging
+import itertools
 from letterboxdpy.user import User
 from letterboxdpy.movie import Movie
 from sentry_sdk.logger import warning
@@ -23,7 +24,7 @@ def verify_users(usernames: list[str]) -> set[User]:
             pass
 
     if len(user_list) < 2:
-        raise Exception("You need at least too users that have a letterboxd account.")
+        raise Exception("You need at least two users that have a letterboxd account.")
 
     return user_list
 
@@ -49,3 +50,27 @@ def get_movie_from_slug(slug: str):
         "year": m.get_year(),
         "summary": m.get_description(),
     }
+
+
+def create_set_slug(k, users: set[User]) -> set[str]:
+    """
+    Use when you want to create a set containing slug movies in k person's watchlist in the total of person's watchlist
+    :param k: the number of people that must have a film to be in the return set
+    :param users: a list of user object
+    :return: set of slug movies
+    """
+    n_union = set()
+
+    for n_tuples in itertools.combinations(users, k):
+        tuple_intersection = set()
+
+        for use in n_tuples:
+
+            if tuple_intersection == set():
+                tuple_intersection = get_slug_watchlist(use)
+
+            tuple_intersection &= get_slug_watchlist(use)
+
+        n_union = n_union.union(tuple_intersection)
+
+    return n_union
