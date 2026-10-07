@@ -30,17 +30,23 @@ async def intersect_watchlist(payload: WatchlistIntersectRequest):
         nb_users = len(users)
 
         slug_watchlist_intersections = {nb_users: create_set_slug(nb_users, users)}
-        all_slugs = slug_watchlist_intersections[nb_users]
+        all_slugs = slug_watchlist_intersections[nb_users].copy()
+        print(f"all slugs : {all_slugs}")
 
-        if nb_users > 2:
+        if nb_users > 2 and not all_slugs:
             min_users = math.ceil(nb_users / 2)
             keys_desc = list(range(nb_users - 1, min_users - 1, -1))
+            print(keys_desc)
 
             for n in keys_desc:
                 n_slug = create_set_slug(n, users)
+                print(f"all slugs in {n/nb_users} : {n_slug}")
                 # this order matters, to convince yourself write a superposition groups
+                print(n)
                 slug_watchlist_intersections[n] = n_slug.difference(all_slugs)
-                all_slugs = all_slugs.union(n_slug)
+                print(f"tiers : {slug_watchlist_intersections}")
+                all_slugs.update(n_slug)
+                print(f"all slugs : {all_slugs}")
 
         correspond = {}
         for slug in all_slugs:
@@ -65,6 +71,7 @@ async def intersect_watchlist(payload: WatchlistIntersectRequest):
         logger.info(
             f"Intersection completed successfully. Found {total_movies_count} movies across {len(result)} tiers."
         )
+        print(result)
 
         return {
             "users_checked": user_list,

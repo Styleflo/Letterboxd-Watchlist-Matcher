@@ -61,16 +61,15 @@ def create_set_slug(k, users: set[User]) -> set[str]:
     """
     n_union = set()
 
+    users_list = list(users)
+    watchlist_cache = {user: get_slug_watchlist(user) for user in users_list}
+
     for n_tuples in itertools.combinations(users, k):
-        tuple_intersection = set()
+        first_user = n_tuples[0]
+        tuple_intersection = set(watchlist_cache[first_user])
 
-        for use in n_tuples:
-
-            if tuple_intersection == set():
-                tuple_intersection = get_slug_watchlist(use)
-
-            tuple_intersection &= get_slug_watchlist(use)
-
-        n_union = n_union.union(tuple_intersection)
+        for user in n_tuples[1:]:
+            tuple_intersection.intersection_update(watchlist_cache[user])
+        n_union.update(tuple_intersection)
 
     return n_union
