@@ -7,6 +7,11 @@ interface ErrorMessageProps {
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry }) => {
+  const isAccountError = message.toLowerCase().includes('letterboxd account');
+  const displayMessage = isAccountError
+    ? 'One or more usernames could not be verified on Letterboxd. Please check for typos or ensure their accounts are public.'
+    : message;
+
   return (
     <div className="bg-red-950/30 border border-red-800/60 rounded-xl p-5 sm:p-6 text-center max-w-2xl mx-auto my-6 animate-fadeIn">
       <div className="w-12 h-12 rounded-full bg-red-900/40 text-red-400 flex items-center justify-center mx-auto mb-3">
@@ -15,15 +20,9 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry }) 
       <h3 className="text-base font-semibold text-red-200 mb-1">
         Unable to Fetch Common Watchlists
       </h3>
-      <p className="text-xs sm:text-sm text-red-300/80 mb-3 max-w-lg mx-auto leading-relaxed">
-        {message}
+      <p className="text-xs sm:text-sm text-red-300/80 mb-4 max-w-lg mx-auto leading-relaxed">
+        {displayMessage}
       </p>
-
-      {message.toLowerCase().includes('letterboxd account') && (
-        <div className="mb-4 inline-block bg-lb-card/80 border border-lb-orange/40 rounded-lg px-3 py-1.5 text-xs text-lb-orange">
-          Tip: One or more usernames could not be verified on Letterboxd. Please check for typos or ensure their accounts are public.
-        </div>
-      )}
 
       {onRetry && (
         <button
