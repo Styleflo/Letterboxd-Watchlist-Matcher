@@ -8,7 +8,7 @@ import math
 try:
     from backend.services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users, create_set_slug
 except ModuleNotFoundError:
-    from services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users
+    from services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users, create_set_slug
 
 logger = logging.getLogger(__name__)
 
