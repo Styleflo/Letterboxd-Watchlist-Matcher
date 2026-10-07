@@ -108,4 +108,21 @@ describe('UserGroupManager', () => {
     await user.click(submitBtn);
     expect(handleSubmit).toHaveBeenCalled();
   });
+
+  it('renders "Not found" badge for users present in notFoundUsers', () => {
+    render(
+      <UserGroupManager
+        users={['alice', 'fake_bob']}
+        notFoundUsers={['fake_bob']}
+        onAddUser={vi.fn()}
+        onEditUser={vi.fn()}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    expect(screen.getByText('Not found')).toBeInTheDocument();
+    expect(screen.getByTitle(/This account was not found on Letterboxd/i)).toBeInTheDocument();
+  });
 });

@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { UserPlus, X, Edit2, Check, Users, Sparkles, AlertCircle } from 'lucide-react';
+import { UserPlus, X, Edit2, Check, Users, Sparkles, AlertCircle, AlertTriangle } from 'lucide-react';
 
 interface UserGroupManagerProps {
   users: string[];
+  notFoundUsers?: string[];
   onAddUser: (username: string) => void;
   onEditUser: (index: number, newUsername: string) => void;
   onRemoveUser: (index: number) => void;
@@ -12,6 +13,7 @@ interface UserGroupManagerProps {
 
 export const UserGroupManager: React.FC<UserGroupManagerProps> = ({
   users,
+  notFoundUsers = [],
   onAddUser,
   onEditUser,
   onRemoveUser,
@@ -147,10 +149,18 @@ export const UserGroupManager: React.FC<UserGroupManagerProps> = ({
           <div className="flex flex-wrap gap-2.5">
             {users.map((username, index) => {
               const isEditing = editingIndex === index;
+              const isNotFound = notFoundUsers.some(
+                (u) => u.toLowerCase() === username.toLowerCase()
+              );
+
               return (
                 <div
                   key={`${username}-${index}`}
-                  className="flex items-center gap-1.5 bg-lb-card border border-lb-borderLight/80 text-lb-light rounded-lg px-3 py-1.5 text-sm shadow-sm transition-all"
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm shadow-sm transition-all border ${
+                    isNotFound
+                      ? 'bg-lb-card/90 border-lb-orange/70 text-lb-light ring-1 ring-lb-orange/30'
+                      : 'bg-lb-card border-lb-borderLight/80 text-lb-light'
+                  }`}
                 >
                   {isEditing ? (
                     <div className="flex items-center gap-1.5">
@@ -189,6 +199,15 @@ export const UserGroupManager: React.FC<UserGroupManagerProps> = ({
                   ) : (
                     <>
                       <span className="font-medium text-white">{username}</span>
+                      {isNotFound && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-lb-orange bg-lb-orange/15 px-1.5 py-0.5 rounded border border-lb-orange/30"
+                          title="This account was not found on Letterboxd"
+                        >
+                          <AlertTriangle className="w-3 h-3" />
+                          <span>Not found</span>
+                        </span>
+                      )}
                       <div className="flex items-center ml-1 pl-1.5 border-l border-lb-border">
                         <button
                           type="button"
