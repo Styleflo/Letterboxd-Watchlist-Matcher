@@ -41,8 +41,14 @@ export async function intersectWatchlists(
     let errorMessage = `Request failed with status ${response.status}`;
     try {
       const errorData = await response.json();
-      if (errorData?.detail) {
+      if (typeof errorData?.detail === 'string') {
         errorMessage = errorData.detail;
+      } else if (Array.isArray(errorData?.detail)) {
+        errorMessage = errorData.detail
+          .map((item: { msg?: string }) => item.msg || JSON.stringify(item))
+          .join('; ');
+      } else if (errorData?.message) {
+        errorMessage = errorData.message;
       }
     } catch {
       // Fallback if response is not json
