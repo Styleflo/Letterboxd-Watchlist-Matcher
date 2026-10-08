@@ -20,7 +20,7 @@ Find the movies you and your friends actually want to watch together!
 
 ## Presentation
 
-
+https://github.com/user-attachments/assets/d022ad82-e2fb-45f1-8543-323b2ded39fc
 
 ---
 
