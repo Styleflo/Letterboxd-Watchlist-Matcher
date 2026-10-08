@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
-import { AlertTriangle, RefreshCw, X, Lock } from 'lucide-react';
+import { AlertTriangle, X, Lock } from 'lucide-react';
 import { ErrorState } from '../types';
 
 interface ErrorModalProps {
   error: ErrorState | null;
   onClose: () => void;
-  onRetry?: () => void;
 }
 
-export const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onRetry }) => {
+export const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -115,26 +114,12 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({ error, onClose, onRetry 
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-3 pt-2">
-          {onRetry && (
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onRetry();
-              }}
-              className="inline-flex items-center gap-2 bg-red-900/60 hover:bg-red-800/80 text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-lg transition-colors border border-red-700/50 cursor-pointer"
-            >
-              <RefreshCw className="w-4 h-4" />
-              <span>Try Again</span>
-            </button>
-          )}
-
+        {/* Action Button */}
+        <div className="flex items-center justify-center pt-2">
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center justify-center px-4 py-2.5 bg-lb-card hover:bg-lb-hover border border-lb-border text-lb-text hover:text-white rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+            className="w-full sm:w-auto min-w-[120px] inline-flex items-center justify-center px-5 py-2.5 bg-lb-card hover:bg-lb-hover border border-lb-border text-lb-text hover:text-white rounded-lg text-xs sm:text-sm font-medium transition-colors cursor-pointer"
           >
             Close
           </button>

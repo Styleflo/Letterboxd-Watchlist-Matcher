@@ -195,7 +195,6 @@ export function App() {
       <ErrorModal
         error={errorModal}
         onClose={() => setErrorModal(null)}
-        onRetry={handleIntersect}
       />
 
       {/* Movie Details Modal */}

@@ -54,18 +54,16 @@ describe('ErrorModal', () => {
     expect(handleClose).toHaveBeenCalled();
   });
 
-  it('calls onRetry and onClose when try again button is clicked', async () => {
+  it('calls onClose when the bottom Close button is clicked', async () => {
     const user = userEvent.setup();
     const handleClose = vi.fn();
-    const handleRetry = vi.fn();
     const error: ErrorState = { message: 'Some error' };
 
-    render(<ErrorModal error={error} onClose={handleClose} onRetry={handleRetry} />);
+    render(<ErrorModal error={error} onClose={handleClose} />);
 
-    const retryBtn = screen.getByRole('button', { name: /Try Again/i });
-    await user.click(retryBtn);
+    const bottomCloseBtn = screen.getByRole('button', { name: /^Close$/i });
+    await user.click(bottomCloseBtn);
 
     expect(handleClose).toHaveBeenCalled();
-    expect(handleRetry).toHaveBeenCalled();
   });
 });
