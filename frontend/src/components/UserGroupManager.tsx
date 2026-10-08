@@ -70,6 +70,13 @@ export const UserGroupManager: React.FC<UserGroupManagerProps> = ({
       return;
     }
 
+    // If unchanged, exit editing without updating
+    if (trimmed === users[index]?.toLowerCase()) {
+      setEditingIndex(null);
+      setValidationError(null);
+      return;
+    }
+
     if (!/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
       setValidationError('Username can only contain letters, numbers, hyphens, and underscores.');
       return;

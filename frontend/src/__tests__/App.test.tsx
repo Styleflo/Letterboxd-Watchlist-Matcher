@@ -129,6 +129,46 @@ describe('App - User Not Found & State Lifecycle', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
+  it('keeps the red mark and warning banner if editing a user without changing the username', async () => {
+    const user = userEvent.setup();
+    vi.mocked(api.intersectWatchlists).mockResolvedValue({
+      total_movies_found: 0,
+      total_users: 2,
+      users_checked: ['alice', 'bob'],
+      movies: {},
+    });
+
+    render(<App />);
+
+    const input = screen.getByPlaceholderText(/e\.g\. dave/i);
+    const addBtn = screen.getByRole('button', { name: /Add User/i });
+
+    await user.type(input, 'alice');
+    await user.click(addBtn);
+    await user.type(input, 'bob');
+    await user.click(addBtn);
+    await user.type(input, 'charlie_typo');
+    await user.click(addBtn);
+
+    await user.click(screen.getByRole('button', { name: /Find Common Movies/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Not found')).toBeInTheDocument();
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+    });
+
+    // Click edit on charlie_typo and save without modifying
+    const editBtn = screen.getByRole('button', { name: /Edit username charlie_typo/i });
+    await user.click(editBtn);
+
+    await user.click(screen.getByRole('button', { name: /Save username/i }));
+
+    // Red mark and warning alert must STILL be present
+    expect(screen.getByText('Not found')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText('@charlie_typo')).toBeInTheDocument();
+  });
+
   it('updates the alert and only removes it when the last not-found user is edited or removed', async () => {
     const user = userEvent.setup();
     vi.mocked(api.intersectWatchlists).mockResolvedValue({

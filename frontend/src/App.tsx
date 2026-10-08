@@ -30,6 +30,13 @@ export function App() {
   const handleEditUser = useCallback((index: number, newUsername: string) => {
     setUsers((prev) => {
       const oldUser = prev[index]?.toLowerCase();
+      const nextUser = newUsername.trim().toLowerCase();
+
+      // If username did not change, do nothing
+      if (oldUser === nextUser) {
+        return prev;
+      }
+
       const next = [...prev];
       next[index] = newUsername;
 

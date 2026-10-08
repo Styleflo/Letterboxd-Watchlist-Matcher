@@ -142,4 +142,28 @@ describe('UserGroupManager', () => {
     expect(screen.getByText('Private')).toBeInTheDocument();
     expect(screen.getByTitle(/This account is private on Letterboxd/i)).toBeInTheDocument();
   });
+
+  it('does not trigger onEditUser when saving without changing the username', async () => {
+    const user = userEvent.setup();
+    const handleEditUser = vi.fn();
+
+    render(
+      <UserGroupManager
+        users={['filmfan']}
+        onAddUser={vi.fn()}
+        onEditUser={handleEditUser}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    const editBtn = screen.getByRole('button', { name: /Edit username filmfan/i });
+    await user.click(editBtn);
+
+    const saveBtn = screen.getByRole('button', { name: /Save username/i });
+    await user.click(saveBtn);
+
+    expect(handleEditUser).not.toHaveBeenCalled();
+  });
 });
