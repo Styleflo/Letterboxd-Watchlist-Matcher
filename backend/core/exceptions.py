@@ -29,13 +29,13 @@ class UserValidationError(VerificationError):
         if self.not_found:
             users = ", ".join(self.not_found)
             parts.append(
-                f"The following username(s) could not be found: {users}. Please check for typos."
+                f"The following username(s) could not be found. Please check for typos."
             )
 
         if self.private:
             users = ", ".join(self.private)
             parts.append(
-                f"The following account(s) are private: {users}. Please ensure their profiles are public."
+                f"The following account(s) are private. Please ensure their profiles are public."
             )
 
         super().__init__(" ".join(parts))
