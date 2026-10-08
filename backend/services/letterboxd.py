@@ -2,29 +2,52 @@ import logging
 import itertools
 from letterboxdpy.user import User
 from letterboxdpy.movie import Movie
+from letterboxdpy.core.exceptions import AccessDeniedError, PrivateRouteError, ResourceNotFoundError
 from sentry_sdk.logger import warning
+
+try:
+    from backend.core.exceptions import InsufficientInputError, UserValidationError
+except ModuleNotFoundError:
+    from core.exceptions import InsufficientInputError, UserValidationError
 
 logger = logging.getLogger(__name__)
 
 
 def verify_users(usernames: list[str]) -> set[User]:
     if not usernames or len(usernames) < 2:
-        raise Exception("You need at least two users.")
+        raise InsufficientInputError("You need at least two users.")
 
     # We verify every user exist (no miss click...)
     user_list = set()
+    failed_usernames: list[str] = []
+    private_usernames: list[str] = []
     for username in usernames:
         logger.info(f"Verifying the existence of Letterboxd profile for user: {username}")
         try:
             u = User(username)
             user_list.add(u)
 
-        except Exception as e:
-            logger.warning(f"Error {e} for the user '{username}'.")
+        except ResourceNotFoundError as e:
+            logger.warning(f"Error {e} for the user '{username}' with url {e.url}.")
+            failed_usernames.append(username)
             pass
 
+        except PrivateRouteError as e:
+            logger.warning(f"Error {e} for the user '{username}'.")
+            private_usernames.append(username)
+            pass
+
+        except AccessDeniedError as e:
+            logger.warning(f"Error {e} for the user '{username}'.")
+            raise AccessDeniedError
+
     if len(user_list) < 2:
-        raise Exception("You need at least two users that have a letterboxd account.")
+
+        if failed_usernames or private_usernames:
+            raise UserValidationError(
+                not_found=failed_usernames,
+                private=private_usernames
+            )
 
     return user_list
 

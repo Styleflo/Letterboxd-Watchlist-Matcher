@@ -75,4 +75,36 @@ describe('intersectWatchlists API service', () => {
       'An error occurred while fetching Letterboxd data: User not found'
     );
   });
+
+  it('extracts structured USER_VALIDATION_ERROR fields properly', async () => {
+    const errorPayload = {
+      detail: {
+        code: 'USER_VALIDATION_ERROR',
+        message: 'The following username(s) could not be found: ghost.',
+        not_found: ['ghost'],
+        private: ['secret_user'],
+      },
+    };
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: vi.fn().mockResolvedValue(errorPayload),
+    } as unknown as Response);
+
+    try {
+      await intersectWatchlists(['ghost', 'secret_user']);
+      expect.unreachable('Should have thrown an error');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ApiRequestError);
+      const apiErr = err as ApiRequestError;
+      expect(apiErr.statusCode).toBe(422);
+      expect(apiErr.code).toBe('USER_VALIDATION_ERROR');
+      expect(apiErr.message).toBe(
+        'The following username(s) could not be found: ghost.'
+      );
+      expect(apiErr.notFoundUsers).toEqual(['ghost']);
+      expect(apiErr.privateUsers).toEqual(['secret_user']);
+    }
+  });
 });

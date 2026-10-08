@@ -22,6 +22,20 @@ export interface IntersectResponse {
   common_movies?: Movie[];
 }
 
+export interface ApiErrorDetail {
+  code?: string;
+  message?: string;
+  not_found?: string[];
+  private?: string[];
+}
+
+export interface ErrorState {
+  message: string;
+  code?: string;
+  notFoundUsers?: string[];
+  privateUsers?: string[];
+}
+
 export interface ApiError {
-  detail: string;
+  detail: string | ApiErrorDetail;
 }

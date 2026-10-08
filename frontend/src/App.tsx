@@ -1,21 +1,27 @@
 import { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { UserGroupManager } from './components/UserGroupManager';
+import { UserNotFoundAlert } from './components/UserNotFoundAlert';
 import { MovieGrid } from './components/MovieGrid';
 import { MovieModal } from './components/MovieModal';
 import { LoadingState } from './components/LoadingState';
-import { ErrorMessage } from './components/ErrorMessage';
+import { ErrorModal } from './components/ErrorModal';
 import { EmptyState } from './components/EmptyState';
-import { Movie, IntersectResponse } from './types';
+import { Movie, IntersectResponse, ErrorState } from './types';
 import { intersectWatchlists, ApiRequestError } from './services/api';
 import { Heart } from 'lucide-react';
 
 export function App() {
   const [users, setUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorModal, setErrorModal] = useState<ErrorState | null>(null);
+  const [unverifiedUsers, setUnverifiedUsers] = useState<{
+    notFound: string[];
+    private: string[];
+  }>({ notFound: [], private: [] });
   const [result, setResult] = useState<IntersectResponse | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
+  const [dismissedNotFound, setDismissedNotFound] = useState(false);
 
   const handleAddUser = useCallback((username: string) => {
     setUsers((prev) => [...prev, username]);
@@ -23,33 +29,88 @@ export function App() {
 
   const handleEditUser = useCallback((index: number, newUsername: string) => {
     setUsers((prev) => {
+      const oldUser = prev[index]?.toLowerCase();
+      const nextUser = newUsername.trim().toLowerCase();
+
+      // If username did not change, do nothing
+      if (oldUser === nextUser) {
+        return prev;
+      }
+
       const next = [...prev];
       next[index] = newUsername;
+
+      if (oldUser) {
+        setUnverifiedUsers((current) => ({
+          notFound: current.notFound.filter((u) => u.toLowerCase() !== oldUser),
+          private: current.private.filter((u) => u.toLowerCase() !== oldUser),
+        }));
+      }
+
       return next;
     });
   }, []);
 
   const handleRemoveUser = useCallback((index: number) => {
-    setUsers((prev) => prev.filter((_, i) => i !== index));
+    setUsers((prev) => {
+      const removedUser = prev[index]?.toLowerCase();
+      if (removedUser) {
+        setUnverifiedUsers((current) => ({
+          notFound: current.notFound.filter((u) => u.toLowerCase() !== removedUser),
+          private: current.private.filter((u) => u.toLowerCase() !== removedUser),
+        }));
+      }
+      return prev.filter((_, i) => i !== index);
+    });
+  }, []);
+
+  const handleRemoveNotFoundUsers = useCallback((usersToRemove: string[]) => {
+    const toRemoveSet = new Set(usersToRemove.map((u) => u.toLowerCase()));
+    setUsers((prev) => prev.filter((u) => !toRemoveSet.has(u.toLowerCase())));
+    setUnverifiedUsers((current) => ({
+      notFound: current.notFound.filter((u) => !toRemoveSet.has(u.toLowerCase())),
+      private: current.private.filter((u) => !toRemoveSet.has(u.toLowerCase())),
+    }));
   }, []);
 
   const handleIntersect = useCallback(async () => {
     if (users.length < 2) return;
 
     setIsLoading(true);
-    setError(null);
+    setErrorModal(null);
     setResult(null);
+    setDismissedNotFound(false);
+    setUnverifiedUsers({ notFound: [], private: [] });
+
+    const submittedUsers = [...users];
 
     try {
-      const data = await intersectWatchlists(users);
+      const data = await intersectWatchlists(submittedUsers);
       setResult(data);
+      const checkedSet = new Set((data.users_checked || []).map((u) => u.toLowerCase()));
+      const missing = submittedUsers.filter((u) => !checkedSet.has(u.toLowerCase()));
+      setUnverifiedUsers({ notFound: missing, private: [] });
     } catch (err) {
       if (err instanceof ApiRequestError) {
-        setError(err.message);
+        setErrorModal({
+          message: err.message,
+          code: err.code,
+          notFoundUsers: err.notFoundUsers,
+          privateUsers: err.privateUsers,
+        });
+
+        if (err.notFoundUsers.length > 0 || err.privateUsers.length > 0) {
+          setUnverifiedUsers({
+            notFound: err.notFoundUsers,
+            private: err.privateUsers,
+          });
+        }
       } else if (err instanceof Error) {
-        setError(err.message);
+        setErrorModal({ message: err.message });
       } else {
-        setError('An unexpected error occurred while communicating with the server.');
+        setErrorModal({
+          message: 'An unexpected error occurred while communicating with the server.',
+        });
       }
     } finally {
       setIsLoading(false);
@@ -76,6 +137,8 @@ export function App() {
         {/* User Management Form */}
         <UserGroupManager
           users={users}
+          notFoundUsers={unverifiedUsers.notFound}
+          privateUsers={unverifiedUsers.private}
           onAddUser={handleAddUser}
           onEditUser={handleEditUser}
           onRemoveUser={handleRemoveUser}
@@ -83,14 +146,19 @@ export function App() {
           isLoading={isLoading}
         />
 
+        {/* Not Found Users Alert from partial success */}
+        {!isLoading && result && unverifiedUsers.notFound.length > 0 && !dismissedNotFound && (
+          <UserNotFoundAlert
+            notFoundUsers={unverifiedUsers.notFound}
+            onRemoveNotFound={handleRemoveNotFoundUsers}
+            onDismiss={() => setDismissedNotFound(true)}
+          />
+        )}
+
         {/* Dynamic State Views */}
         {isLoading && <LoadingState />}
 
-        {error && !isLoading && (
-          <ErrorMessage message={error} onRetry={handleIntersect} />
-        )}
-
-        {!isLoading && !error && result && (
+        {!isLoading && result && (
           (() => {
             const hasTiersWithMovies =
               Boolean(result.movies) &&
@@ -115,6 +183,12 @@ export function App() {
         )}
       </main>
 
+      {/* Error Pop-in Modal */}
+      <ErrorModal
+        error={errorModal}
+        onClose={() => setErrorModal(null)}
+      />
+
       {/* Movie Details Modal */}
       <MovieModal
         movie={selectedMovie}
@@ -133,4 +207,5 @@ export function App() {
     </div>
   );
 }
+
 export default App;

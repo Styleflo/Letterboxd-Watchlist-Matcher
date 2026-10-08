@@ -108,4 +108,62 @@ describe('UserGroupManager', () => {
     await user.click(submitBtn);
     expect(handleSubmit).toHaveBeenCalled();
   });
+
+  it('renders "Not found" badge for users present in notFoundUsers', () => {
+    render(
+      <UserGroupManager
+        users={['alice', 'fake_bob']}
+        notFoundUsers={['fake_bob']}
+        onAddUser={vi.fn()}
+        onEditUser={vi.fn()}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    expect(screen.getByText('Not found')).toBeInTheDocument();
+    expect(screen.getByTitle(/This account was not found on Letterboxd/i)).toBeInTheDocument();
+  });
+
+  it('renders "Private" badge for users present in privateUsers', () => {
+    render(
+      <UserGroupManager
+        users={['alice', 'private_bob']}
+        privateUsers={['private_bob']}
+        onAddUser={vi.fn()}
+        onEditUser={vi.fn()}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    expect(screen.getByText('Private')).toBeInTheDocument();
+    expect(screen.getByTitle(/This account is private on Letterboxd/i)).toBeInTheDocument();
+  });
+
+  it('does not trigger onEditUser when saving without changing the username', async () => {
+    const user = userEvent.setup();
+    const handleEditUser = vi.fn();
+
+    render(
+      <UserGroupManager
+        users={['filmfan']}
+        onAddUser={vi.fn()}
+        onEditUser={handleEditUser}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    const editBtn = screen.getByRole('button', { name: /Edit username filmfan/i });
+    await user.click(editBtn);
+
+    const saveBtn = screen.getByRole('button', { name: /Save username/i });
+    await user.click(saveBtn);
+
+    expect(handleEditUser).not.toHaveBeenCalled();
+  });
 });
