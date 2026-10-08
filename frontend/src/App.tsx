@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { UserGroupManager } from './components/UserGroupManager';
 import { UserNotFoundAlert } from './components/UserNotFoundAlert';
@@ -15,33 +15,13 @@ export function App() {
   const [users, setUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorModal, setErrorModal] = useState<ErrorState | null>(null);
-  const [activeErrorUsers, setActiveErrorUsers] = useState<{
+  const [unverifiedUsers, setUnverifiedUsers] = useState<{
     notFound: string[];
     private: string[];
   }>({ notFound: [], private: [] });
   const [result, setResult] = useState<IntersectResponse | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [dismissedNotFound, setDismissedNotFound] = useState(false);
-
-  // Compute users submitted who were not found in successful responses
-  const notFoundFromSuccess = useMemo(() => {
-    if (!result || !result.users_checked) return [];
-    const checkedSet = new Set(result.users_checked.map((u) => u.toLowerCase()));
-    return users.filter((u) => !checkedSet.has(u.toLowerCase()));
-  }, [result, users]);
-
-  // Combine error-derived missing users with success-omitted users
-  const combinedNotFoundUsers = useMemo(() => {
-    const set = new Set<string>();
-    activeErrorUsers.notFound.forEach((u) => set.add(u.toLowerCase()));
-    notFoundFromSuccess.forEach((u) => set.add(u.toLowerCase()));
-    return users.filter((u) => set.has(u.toLowerCase()));
-  }, [activeErrorUsers.notFound, notFoundFromSuccess, users]);
-
-  const combinedPrivateUsers = useMemo(() => {
-    const set = new Set(activeErrorUsers.private.map((u) => u.toLowerCase()));
-    return users.filter((u) => set.has(u.toLowerCase()));
-  }, [activeErrorUsers.private, users]);
 
   const handleAddUser = useCallback((username: string) => {
     setUsers((prev) => [...prev, username]);
@@ -54,7 +34,7 @@ export function App() {
       next[index] = newUsername;
 
       if (oldUser) {
-        setActiveErrorUsers((current) => ({
+        setUnverifiedUsers((current) => ({
           notFound: current.notFound.filter((u) => u.toLowerCase() !== oldUser),
           private: current.private.filter((u) => u.toLowerCase() !== oldUser),
         }));
@@ -68,7 +48,7 @@ export function App() {
     setUsers((prev) => {
       const removedUser = prev[index]?.toLowerCase();
       if (removedUser) {
-        setActiveErrorUsers((current) => ({
+        setUnverifiedUsers((current) => ({
           notFound: current.notFound.filter((u) => u.toLowerCase() !== removedUser),
           private: current.private.filter((u) => u.toLowerCase() !== removedUser),
         }));
@@ -80,7 +60,7 @@ export function App() {
   const handleRemoveNotFoundUsers = useCallback((usersToRemove: string[]) => {
     const toRemoveSet = new Set(usersToRemove.map((u) => u.toLowerCase()));
     setUsers((prev) => prev.filter((u) => !toRemoveSet.has(u.toLowerCase())));
-    setActiveErrorUsers((current) => ({
+    setUnverifiedUsers((current) => ({
       notFound: current.notFound.filter((u) => !toRemoveSet.has(u.toLowerCase())),
       private: current.private.filter((u) => !toRemoveSet.has(u.toLowerCase())),
     }));
@@ -93,11 +73,16 @@ export function App() {
     setErrorModal(null);
     setResult(null);
     setDismissedNotFound(false);
+    setUnverifiedUsers({ notFound: [], private: [] });
+
+    const submittedUsers = [...users];
 
     try {
-      const data = await intersectWatchlists(users);
+      const data = await intersectWatchlists(submittedUsers);
       setResult(data);
-      setActiveErrorUsers({ notFound: [], private: [] });
+      const checkedSet = new Set((data.users_checked || []).map((u) => u.toLowerCase()));
+      const missing = submittedUsers.filter((u) => !checkedSet.has(u.toLowerCase()));
+      setUnverifiedUsers({ notFound: missing, private: [] });
     } catch (err) {
       if (err instanceof ApiRequestError) {
         setErrorModal({
@@ -108,7 +93,7 @@ export function App() {
         });
 
         if (err.notFoundUsers.length > 0 || err.privateUsers.length > 0) {
-          setActiveErrorUsers({
+          setUnverifiedUsers({
             notFound: err.notFoundUsers,
             private: err.privateUsers,
           });
@@ -145,8 +130,8 @@ export function App() {
         {/* User Management Form */}
         <UserGroupManager
           users={users}
-          notFoundUsers={combinedNotFoundUsers}
-          privateUsers={combinedPrivateUsers}
+          notFoundUsers={unverifiedUsers.notFound}
+          privateUsers={unverifiedUsers.private}
           onAddUser={handleAddUser}
           onEditUser={handleEditUser}
           onRemoveUser={handleRemoveUser}
@@ -155,9 +140,9 @@ export function App() {
         />
 
         {/* Not Found Users Alert from partial success */}
-        {!isLoading && notFoundFromSuccess.length > 0 && !dismissedNotFound && (
+        {!isLoading && result && unverifiedUsers.notFound.length > 0 && !dismissedNotFound && (
           <UserNotFoundAlert
-            notFoundUsers={notFoundFromSuccess}
+            notFoundUsers={unverifiedUsers.notFound}
             onRemoveNotFound={handleRemoveNotFoundUsers}
             onDismiss={() => setDismissedNotFound(true)}
           />

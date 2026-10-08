@@ -19,10 +19,10 @@ export const UserNotFoundAlert: React.FC<UserNotFoundAlertProps> = ({
   return (
     <div
       role="alert"
-      className="mb-6 bg-lb-panel/95 border border-lb-orange/40 rounded-xl p-4 sm:p-5 shadow-lg animate-fadeIn flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      className="mb-6 bg-lb-panel/95 border border-red-800/60 rounded-xl p-4 sm:p-5 shadow-lg animate-fadeIn flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
     >
       <div className="flex items-start gap-3">
-        <div className="p-2 bg-lb-orange/15 rounded-lg border border-lb-orange/30 text-lb-orange flex-shrink-0 mt-0.5 sm:mt-0">
+        <div className="p-2 bg-red-950/40 rounded-lg border border-red-800/50 text-red-400 flex-shrink-0 mt-0.5 sm:mt-0">
           <AlertTriangle className="w-5 h-5" />
         </div>
         <div className="space-y-1">
@@ -30,7 +30,7 @@ export const UserNotFoundAlert: React.FC<UserNotFoundAlertProps> = ({
             <h4 className="text-sm font-semibold text-white">
               {isPlural ? 'Letterboxd accounts not found' : 'Letterboxd account not found'}
             </h4>
-            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-lb-orange/20 text-lb-orange border border-lb-orange/40">
+            <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-red-950/50 text-red-400 border border-red-800/50">
               Excluded
             </span>
           </div>
@@ -48,7 +48,7 @@ export const UserNotFoundAlert: React.FC<UserNotFoundAlertProps> = ({
               {notFoundUsers.map((user) => (
                 <span
                   key={user}
-                  className="font-mono text-xs font-semibold text-white bg-lb-card border border-lb-borderLight px-2 py-0.5 rounded"
+                  className="font-mono text-xs font-semibold text-red-300 bg-red-950/40 border border-red-800/50 px-2 py-0.5 rounded"
                 >
                   @{user}
                 </span>
@@ -65,9 +65,9 @@ export const UserNotFoundAlert: React.FC<UserNotFoundAlertProps> = ({
         <button
           type="button"
           onClick={() => onRemoveNotFound(notFoundUsers)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-lb-card hover:bg-lb-hover border border-lb-border hover:border-lb-orange/50 text-lb-light hover:text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-lb-card hover:bg-lb-hover border border-lb-border hover:border-red-700/60 text-lb-light hover:text-white rounded-lg text-xs font-medium transition-colors cursor-pointer"
         >
-          <Trash2 className="w-3.5 h-3.5 text-lb-orange" />
+          <Trash2 className="w-3.5 h-3.5 text-red-400" />
           <span>Remove {isPlural ? 'these users' : 'this user'}</span>
         </button>
 
