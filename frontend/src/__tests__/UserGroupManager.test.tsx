@@ -125,4 +125,21 @@ describe('UserGroupManager', () => {
     expect(screen.getByText('Not found')).toBeInTheDocument();
     expect(screen.getByTitle(/This account was not found on Letterboxd/i)).toBeInTheDocument();
   });
+
+  it('renders "Private" badge for users present in privateUsers', () => {
+    render(
+      <UserGroupManager
+        users={['alice', 'private_bob']}
+        privateUsers={['private_bob']}
+        onAddUser={vi.fn()}
+        onEditUser={vi.fn()}
+        onRemoveUser={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+      />
+    );
+
+    expect(screen.getByText('Private')).toBeInTheDocument();
+    expect(screen.getByTitle(/This account is private on Letterboxd/i)).toBeInTheDocument();
+  });
 });
