@@ -1,26 +1,30 @@
-# Letterboxd Watchlist Matcher 🎬
+# Letterboxd Watchlist Matcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Trouvez enfin les films que vous et vos amis avez vraiment envie de regarder ensemble !  
+Trouvez les films que vous et vos amis avez vraiment envie de regarder ensemble!  
 **Letterboxd Watchlist Matcher** compare les watchlists de plusieurs profils Letterboxd pour trouver les films en commun, qu'ils soient partagés par l'ensemble du groupe ou par une partie de vos amis.
 
 *Lire dans d'autres langues : [English](README.md).*
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 - **Intersection multi-utilisateurs** : Ajoutez 2 profils Letterboxd ou plus pour analyser et croiser leurs watchlists respectives.
 - **Résultats par niveaux (Tiers)** : Affichez les films partagés par tous les participants, ainsi que ceux partagés par des sous-groupes (par exemple 3 amis sur 4).
-- **Gestion des comptes invalides/privés** : Alertes et badges visuels en temps réel pour signaler les comptes inexistants ou privés, tout en continuant la comparaison des comptes vérifiés sans interrompre le scan.
 - **Interface sombre inspirée de Letterboxd** : Design moderne et soigné développé avec React, Tailwind CSS et les icônes Lucide, respectant l'identité visuelle de Letterboxd.
 - **Détails interactifs des films** : Cliquez sur n'importe quel film pour consulter son synopsis, son année de sortie, son affiche, ses genres, sa durée et le lien direct vers sa fiche Letterboxd.
-- **Rapide et réactif** : Backend Python FastAPI asynchrone combiné à une application frontend React optimisée avec Vite.
 
 ---
 
-## 🛠️ Stack Technique
+## Presentation
+
+
+
+---
+
+## Stack Technique
 
 ### Frontend
 - **Framework** : React 18 avec TypeScript
@@ -38,7 +42,7 @@ Trouvez enfin les films que vous et vos amis avez vraiment envie de regarder ens
 
 ---
 
-## 🚀 Installation et Lancement Local
+## Installation et Lancement Local
 
 ### Prérequis
 - **Node.js** (v18 ou supérieur) & **npm**
@@ -75,7 +79,7 @@ L'application web sera disponible sur `http://localhost:5173`.
 
 ---
 
-## 🧪 Lancer les Tests
+## Lancer les Tests
 
 ### Tests unitaires et d'intégration Frontend
 ```bash
@@ -89,7 +93,7 @@ npm run test:watch
 
 ---
 
-## ☁️ Déploiement
+## Déploiement
 
 Le projet est préconfiguré pour un déploiement multi-services sur **Vercel** via le fichier [`vercel.json`](vercel.json) :
 - Les routes `/api/*` sont prises en charge par le service backend FastAPI.
@@ -97,13 +101,13 @@ Le projet est préconfiguré pour un déploiement multi-services sur **Vercel** 
 
 ---
 
-## 👏 Crédits
+## Crédits
 
 Ce projet s'appuie sur la bibliothèque open-source suivante :
 - **[letterboxdpy](https://github.com/nmcassa/letterboxdpy)** par [nmcassa](https://github.com/nmcassa) — une API et bibliothèque Python non-officielle pour Letterboxd qui permet d'extraire les données des watchlists et les informations des films.
 
 ---
 
-## 📄 Licence
+## Licence
 
 Ce projet est sous licence [MIT](LICENSE).

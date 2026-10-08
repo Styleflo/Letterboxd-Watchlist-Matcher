@@ -1,4 +1,4 @@
-# Letterboxd Watchlist Matcher 🎬
+# Letterboxd Watchlist Matcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -9,18 +9,22 @@ Find the movies you and your friends actually want to watch together!
 
 ---
 
-## ✨ Features
+## Features
 
 - **Multi-User Watchlist Intersection**: Add 2 or more Letterboxd usernames to scan and intersect their watchlists.
 - **Tiered Matching**: View films shared across all participants, as well as films shared by subsets of users (e.g. 3 of 4 friends).
-- **Graceful Account Validation**: Real-time alerts and visual badges for non-existent or private profiles, allowing seamless comparison of valid accounts without breaking the scan.
 - **Letterboxd-Inspired Dark UI**: Modern, sleek interface built with React, Tailwind CSS, and Lucide icons matching the Letterboxd aesthetic.
 - **Detailed Movie Previews**: Click any movie card to inspect synopses, release years, posters, genres, runtimes, and direct links to Letterboxd pages.
-- **Fast & Responsive**: Python FastAPI backend powered by asynchronous fetching alongside a Vite-powered React single-page app.
 
 ---
 
-## 🛠️ Tech Stack
+## Presentation
+
+
+
+---
+
+## Tech Stack
 
 ### Frontend
 - **Framework**: React 18 with TypeScript
@@ -38,7 +42,7 @@ Find the movies you and your friends actually want to watch together!
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** (v18 or later) & **npm**
@@ -75,7 +79,7 @@ The application will be accessible at `http://localhost:5173`.
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ### Frontend Unit & Integration Tests
 ```bash
@@ -89,7 +93,7 @@ npm run test:watch
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 The repository is pre-configured for multi-service deployment on **Vercel** via [`vercel.json`](vercel.json):
 - `/api/*` routes are handled by the FastAPI backend service.
@@ -97,13 +101,13 @@ The repository is pre-configured for multi-service deployment on **Vercel** via 
 
 ---
 
-## 👏 Credits
+## Credits
 
 This project relies on the following open-source library:
 - **[letterboxdpy](https://github.com/nmcassa/letterboxdpy)** by [nmcassa](https://github.com/nmcassa) — an unofficial Letterboxd Python API and scraping client that powers our watchlist extraction and movie data fetching.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
