@@ -2,6 +2,7 @@ import logging
 import itertools
 from letterboxdpy.user import User
 from letterboxdpy.movie import Movie
+from letterboxdpy.core.scraper import Scraper
 from letterboxdpy.core.exceptions import AccessDeniedError, PrivateRouteError, ResourceNotFoundError
 from sentry_sdk.logger import warning
 
@@ -24,6 +25,7 @@ def verify_users(usernames: list[str]) -> set[User]:
     for username in usernames:
         logger.info(f"Verifying the existence of Letterboxd profile for user: {username}")
         try:
+            Scraper.headers["referer"] = "https://letterboxd.com/"
             u = User(username)
             user_list.add(u)
 
