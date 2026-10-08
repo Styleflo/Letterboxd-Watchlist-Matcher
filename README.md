@@ -10,10 +10,11 @@ Find the movies you and your friends actually want to watch together!
 ---
 
 ## Features
+_All the logic is made by me, the ui and the frontend is made by ai_
 
 - **Multi-User Watchlist Intersection**: Add 2 or more Letterboxd usernames to scan and intersect their watchlists.
 - **Tiered Matching**: View films shared across all participants, as well as films shared by subsets of users (e.g. 3 of 4 friends).
-- **Letterboxd-Inspired Dark UI**: Modern, sleek interface built with React, Tailwind CSS, and Lucide icons matching the Letterboxd aesthetic.
+- **Letterboxd-Inspired Dark UI**: Modern, sleek interface built with React, Tailwind CSS, and Lucide icons matching the Letterboxd aesthetic. (made by ai)
 - **Detailed Movie Previews**: Click any movie card to inspect synopses, release years, posters, genres, runtimes, and direct links to Letterboxd pages.
 
 ---
