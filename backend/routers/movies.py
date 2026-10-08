@@ -1,14 +1,16 @@
-import itertools
 import logging
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from letterboxdpy.core.exceptions import AccessDeniedError
 import math
 
 try:
     from backend.services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users, create_set_slug
+    from backend.core.exceptions import UserValidationError, InsufficientInputError
 except ModuleNotFoundError:
     from services.letterboxd import get_movie_from_slug, get_slug_watchlist, verify_users, create_set_slug
+    from core.exceptions import UserValidationError, InsufficientInputError
 
 logger = logging.getLogger(__name__)
 
@@ -31,22 +33,16 @@ async def intersect_watchlist(payload: WatchlistIntersectRequest):
 
         slug_watchlist_intersections = {nb_users: create_set_slug(nb_users, users)}
         all_slugs = slug_watchlist_intersections[nb_users].copy()
-        print(f"all slugs : {all_slugs}")
 
         if nb_users > 2 and not all_slugs:
             min_users = math.ceil(nb_users / 2)
             keys_desc = list(range(nb_users - 1, min_users - 1, -1))
-            print(keys_desc)
 
             for n in keys_desc:
                 n_slug = create_set_slug(n, users)
-                print(f"all slugs in {n/nb_users} : {n_slug}")
                 # this order matters, to convince yourself write a superposition groups
-                print(n)
                 slug_watchlist_intersections[n] = n_slug.difference(all_slugs)
-                print(f"tiers : {slug_watchlist_intersections}")
                 all_slugs.update(n_slug)
-                print(f"all slugs : {all_slugs}")
 
         correspond = {}
         for slug in all_slugs:
@@ -67,11 +63,9 @@ async def intersect_watchlist(payload: WatchlistIntersectRequest):
                 "movies": movie_list
             }
 
-
         logger.info(
             f"Intersection completed successfully. Found {total_movies_count} movies across {len(result)} tiers."
         )
-        print(result)
 
         return {
             "users_checked": user_list,
@@ -80,12 +74,40 @@ async def intersect_watchlist(payload: WatchlistIntersectRequest):
             "movies": result,
         }
 
-    except Exception as e:
-        logger.error(
-            f"An error occurred while processing watchlists: {str(e)}",
-            exc_info=True,
+    except InsufficientInputError as e:
+        logger.warning(f"Client input error: {e}")
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": e.code,
+                "message": str(e),
+            },
         )
+
+    except UserValidationError as e:
+        logger.warning(f"User validation failed: {e}")
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": e.code,
+                "message": str(e),
+                "not_found": e.not_found,
+                "private": e.private,
+            },
+        )
+
+    except AccessDeniedError as e:
+        logger.warning(f"Domain verification error: {e}")
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "message": str(e),
+            },
+        )
+
+    except Exception as e:
+        logger.error(f"Unexpected error while processing watchlists: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
-            detail=f"An error occurred while fetching Letterboxd data: {str(e)}",
+            detail="An internal server error occurred while processing the request.",
         )
