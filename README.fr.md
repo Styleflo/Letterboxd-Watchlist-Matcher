@@ -10,10 +10,11 @@ Trouvez les films que vous et vos amis avez vraiment envie de regarder ensemble!
 ---
 
 ## Fonctionnalités
+_Toue la logique est faite par moi, le frontend et les visuels sont fait par ia_
 
 - **Intersection multi-utilisateurs** : Ajoutez 2 profils Letterboxd ou plus pour analyser et croiser leurs watchlists respectives.
 - **Résultats par niveaux (Tiers)** : Affichez les films partagés par tous les participants, ainsi que ceux partagés par des sous-groupes (par exemple 3 amis sur 4).
-- **Interface sombre inspirée de Letterboxd** : Design moderne et soigné développé avec React, Tailwind CSS et les icônes Lucide, respectant l'identité visuelle de Letterboxd.
+- **Interface sombre inspirée de Letterboxd** : Design moderne et soigné développé avec React, Tailwind CSS et les icônes Lucide, respectant l'identité visuelle de Letterboxd. (fait par ia)
 - **Détails interactifs des films** : Cliquez sur n'importe quel film pour consulter son synopsis, son année de sortie, son affiche, ses genres, sa durée et le lien direct vers sa fiche Letterboxd.
 
 ---
