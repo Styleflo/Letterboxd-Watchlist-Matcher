@@ -5,7 +5,7 @@
 Find the movies you and your friends actually want to watch together!  
 **Letterboxd Watchlist Matcher** compares watchlists across multiple Letterboxd profiles to find films in common, whether shared by everyone or across subsets of your group.
 
-*Read this in other languages: [Français](REAMDME.fr.md).*
+*Read this in other languages: [Français](README.fr.md).*
 
 ---
 
